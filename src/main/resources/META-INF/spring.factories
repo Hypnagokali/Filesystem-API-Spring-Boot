@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  de.xenadu.fsApi.configuration.FsApiConfig,\
+  de.xenadu.fsApi.properties.FilesystemApiProperties
