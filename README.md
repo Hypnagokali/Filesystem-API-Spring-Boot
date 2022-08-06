@@ -1,9 +1,14 @@
 # Filesystem API for Spring Boot Applications
 
-## Installation
-* Autowire the PathWrapper bean
-* pathWrapper.getPathByName("some name") will return a Path
-* if checkPaths=true, DefaultPathWrapper checks existence of paths.
+## Quickstart
+* build jar and include it into a Spring Boot project
+* Autowire the PathWrapper bean to use PathWrapper
+* Autowire the FilesystemApi bean to use the API
+  * PathWrapper
+    * pathWrapper.getPathByName("some name") will return a Path to a specific location
+  * FilesystemApi
+    * uploadFile(Multipartfile file) will return a FsFile
+    * FsFile can be implemented by an JPA Entity (e.g.: "Upload")
 
 ## Configuring paths
 
@@ -15,6 +20,10 @@
   * if true, the PathWrapper have to check if the paths exists or throw an Exception.
 
 ## Using the API
+
+
+### Uploading a file
+
 
 * ToDo:
   * copy and move
