@@ -15,7 +15,7 @@ public class DefaultFileCommand implements FileCommand {
 
     private File file;
     private byte[] content;
-    private boolean isOnlyBytes;
+    private final boolean isOnlyBytes;
     private Charset charset = StandardCharsets.UTF_8;
 
     public DefaultFileCommand(File file) {

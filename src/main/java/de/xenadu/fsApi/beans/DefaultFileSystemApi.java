@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,9 +48,7 @@ public class DefaultFileSystemApi implements FilesystemApi {
 
         final File file = getFileFromPath(pathByName + "/" + filename);
 
-        DownloadFileResponse response = new RawByteDownloadFileResponse(file);
-
-        return null;
+        return new RawByteDownloadFileResponse(file);
     }
 
     private File getFileFromPath(String fullPathToFile) {

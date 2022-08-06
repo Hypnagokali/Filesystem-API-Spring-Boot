@@ -2,15 +2,13 @@ package de.xenadu.fsApi.beans;
 
 import de.xenadu.fsApi.asserts.Assert;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class DefaultPathWrapper implements PathWrapper {
 
-    private Map<String, String> pathMap = new HashMap<>();
+    private final Map<String, String> pathMap;
 
     public DefaultPathWrapper(Map<String, String> pathMap) {
         this.pathMap = pathMap;
