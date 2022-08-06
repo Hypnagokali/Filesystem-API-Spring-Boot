@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.file.Path;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,25 +18,25 @@ class FsApiConfigTest {
 
     @Test
     public void applicationProperties_getTempPathTest() throws Exception {
-        final Optional<String> temp = pathWrapper.getPathByName("temp");
+        final Optional<Path> temp = pathWrapper.getPathByName("temp");
 
         assertThat(temp).isNotEmpty();
-        assertThat(temp.get()).isEqualTo("/data/temp");
+        assertThat(temp.get()).isEqualTo(Path.of("/data/temp"));
     }
 
     @Test
     public void applicationProperties_getTempUploadTest() throws Exception {
-        final Optional<String> temp = pathWrapper.getPathByName("upload");
+        final Optional<Path> temp = pathWrapper.getPathByName("upload");
 
         assertThat(temp).isNotEmpty();
-        assertThat(temp.get()).isEqualTo("/data/upload");
+        assertThat(temp.get()).isEqualTo(Path.of("/data/upload"));
     }
 
     @Test
     public void filesystemProperties_getAnotherTest() throws Exception {
-        final Optional<String> temp = pathWrapper.getPathByName("another");
+        final Optional<Path> temp = pathWrapper.getPathByName("another");
 
         assertThat(temp).isNotEmpty();
-        assertThat(temp.get()).isEqualTo("/and/another/path");
+        assertThat(temp.get()).isEqualTo(Path.of("/and/another/path"));
     }
 }

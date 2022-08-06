@@ -1,5 +1,9 @@
 package de.xenadu.fsApi.beans;
 
+import de.xenadu.fsApi.asserts.Assert;
+
+import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +17,22 @@ public class DefaultPathWrapper implements PathWrapper {
     }
 
     @Override
-    public Optional<String> getPathByName(String pathByName) {
-        return pathMap.get(pathByName) == null ? Optional.empty() : Optional.of(pathMap.get(pathByName));
+    public void checkPaths() {
+        for (String path : pathMap.values()) {
+            Assert.pathsExists(Path.of(path));
+        }
+    }
+
+    @Override
+    public Optional<Path> getPathByName(String pathByName) {
+        return pathMap.get(pathByName) == null ? Optional.empty() : Optional.of(Path.of(pathMap.get(pathByName)));
+    }
+
+    @Override
+    public void addPath(String pathName, String absolutePath) {
+        Assert.pathsExists(Path.of(absolutePath));
+        Assert.pathIsDirectory(Path.of(absolutePath));
+
+        pathMap.put(pathName, absolutePath);
     }
 }

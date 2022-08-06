@@ -19,6 +19,7 @@ import java.util.Map;
 @Data
 public class FilesystemApiProperties {
 
+    private boolean checkPaths = false;
     private Map<String, String> paths = new HashMap<>();
 
 }
