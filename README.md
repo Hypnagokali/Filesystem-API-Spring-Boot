@@ -12,7 +12,7 @@
   * filesystem-api.paths.temp=/some/temp/path
   * filesystem-api.paths.upload=/some/upload/path
 * checkPaths Property (default = false)
-  * if true, the PathWrapper have to check, if paths exists, or throw an Exception.
+  * if true, the PathWrapper have to check if the paths exists or throw an Exception.
 
 ## Using the API
 
