@@ -1,11 +1,9 @@
 package de.xenadu.fsApi.configuration;
 
-import de.xenadu.fsApi.beans.DefaultPathWrapper;
-import de.xenadu.fsApi.beans.PathWrapper;
-import de.xenadu.fsApi.beans.UniqueFilenameGenerator;
-import de.xenadu.fsApi.beans.UniqueNameWithIndexGenerator;
+import de.xenadu.fsApi.beans.*;
 import de.xenadu.fsApi.properties.FilesystemApiProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +29,12 @@ public class FsApiConfig {
         }
 
         return defaultPathWrapper;
+    }
+
+    @Bean
+    @ConditionalOnBean(PathWrapper.class)
+    public FilesystemApi filesystemApi() {
+        return new DefaultFileSystemApi(pathWrapper());
     }
 
 }

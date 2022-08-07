@@ -19,4 +19,8 @@ public final class Assert {
     public static void notNull(Object o) {
         if (o == null) throw new IllegalArgumentException("Object must not be null");
     }
+
+    public static void notNullOrBlank(String s) {
+        if (s == null || s.isBlank()) throw new IllegalArgumentException("String must not be null or empty");
+    }
 }

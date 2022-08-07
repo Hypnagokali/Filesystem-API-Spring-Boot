@@ -5,13 +5,18 @@ import de.xenadu.fsApi.pojos.DownloadFileResponse;
 import de.xenadu.fsApi.types.FsFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 
 public interface FilesystemApi {
 
     void deleteAllFiles(Path path);
     void saveFile(FileCommand fileCommand);
+
+    FsFile uploadFile(InputStream fileContent, String originalName, String pathToFile, String filename);
     FsFile uploadFile(MultipartFile file, String pathToFile, String filename);
+
+    DownloadFileResponse getFileByAbsolutePath(String absolutePath);
 
     DownloadFileResponse getFileByPathNameAndFileName(String pathName, String filename);
     // moveFile

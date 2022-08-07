@@ -19,6 +19,11 @@
 * checkPaths Property (default = false)
   * if true, the PathWrapper have to check if the paths exists or throw an Exception.
 
+## UniqueFilename
+* UniqueFilenameGenerator
+  * Config: UniqueFilenameIndexGenerator or UniqueFilenameDateTimeGenerator
+  * Build Customer Generator (ToDo)
+
 ## Using the API
 
 
