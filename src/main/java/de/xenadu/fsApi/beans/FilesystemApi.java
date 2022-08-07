@@ -13,6 +13,9 @@ public interface FilesystemApi {
     void deleteAllFiles(Path path);
     void saveFile(FileCommand fileCommand);
 
+    <T extends FsFile> T uploadFileTyped(InputStream fileContent, String originalName, String pathToFile, String filename, T upload);
+    <T extends FsFile> T uploadFileTyped(MultipartFile file, String pathToFile, String filename, T upload);
+
     FsFile uploadFile(InputStream fileContent, String originalName, String pathToFile, String filename);
     FsFile uploadFile(MultipartFile file, String pathToFile, String filename);
 

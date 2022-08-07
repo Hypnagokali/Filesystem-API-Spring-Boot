@@ -42,6 +42,22 @@ public class DefaultFileSystemApi implements FilesystemApi {
     }
 
     @Override
+    public <T extends FsFile> T uploadFileTyped(InputStream fileContent, String originalName, String pathToFile, String filename, T upload) {
+        final FsFile fsFile = uploadFile(fileContent, originalName, pathToFile, filename);
+        upload.populate(fsFile.getFullPath(), fsFile.getOriginalName(), fsFile.getSize());
+
+        return upload;
+    }
+
+    @Override
+    public <T extends FsFile> T uploadFileTyped(MultipartFile file, String pathToFile, String filename, T upload) {
+        final FsFile fsFile = uploadFile(file, pathToFile, filename);
+        upload.populate(fsFile.getFullPath(), fsFile.getOriginalName(), fsFile.getSize());
+
+        return upload;
+    }
+
+    @Override
     public FsFile uploadFile(InputStream fileContent, String originalName, String pathToFile, String filename) {
         File fsFile = new File(pathToFile + "/" + filename);
 
