@@ -23,4 +23,8 @@ public final class Assert {
     public static void notNullOrBlank(String s) {
         if (s == null || s.isBlank()) throw new IllegalArgumentException("String must not be null or empty");
     }
+
+    public static void fieldNotNull(Object f, String msg) {
+        if (f == null) throw new IllegalStateException("Field must not be null: " + msg);
+    }
 }

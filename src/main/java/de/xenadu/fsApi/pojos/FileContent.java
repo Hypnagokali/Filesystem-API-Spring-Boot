@@ -1,6 +1,7 @@
 package de.xenadu.fsApi.pojos;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 
 /**
@@ -10,21 +11,31 @@ import java.nio.file.Path;
  * It could be just a String or any other content, and if it has no filename, than this FileCommand is transient. It has not been saved yet.
  *
  */
-public interface FileCommand {
+public interface FileContent {
 
     /**
-     * throws IllegalStateException if FileCommand is transient
+     *
+     * @return Charset of file content
+     */
+    Charset getCharset();
+
+    /**
+     * Throws IllegalStateException if FileCommand is transient
      * @return File
      */
-    File toFile();
+    File readFile();
+
+
+    File writeToFile(Path absolutePath);
 
     /**
+     * Overwrites file if file exists or else creates a new file.
      *
      * @param pathToFile the path to the directory, where the file will be saved
      * @param filename the name of the file
      * @return File
      */
-    File toFile(Path pathToFile, String filename);
+    File writeToFile(Path pathToFile, String filename);
 
     /**
      *
@@ -47,4 +58,5 @@ public interface FileCommand {
     String getFilename();
 
     Path getPathToFile();
+
 }

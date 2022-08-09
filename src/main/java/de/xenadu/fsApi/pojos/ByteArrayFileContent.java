@@ -2,12 +2,16 @@ package de.xenadu.fsApi.pojos;
 
 import de.xenadu.fsApi.asserts.Assert;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.List;
 
-public class DefaultFileCommand implements FileCommand {
+public class ByteArrayFileContent implements FileContent {
 
     private String filename;
     private Path pathToFile;
@@ -15,29 +19,49 @@ public class DefaultFileCommand implements FileCommand {
 
     private File file;
     private byte[] content;
-    private final boolean isOnlyBytes;
     private Charset charset = StandardCharsets.UTF_8;
 
-    public DefaultFileCommand(File file) {
+    public ByteArrayFileContent(File file) {
         this.file = file;
         this.filename = file.getName();
-        this.pathToFile = file.getParentFile().toPath();
-        this.isOnlyBytes = true;
+
+        setPathToFile(file.toPath());
     }
 
-    public DefaultFileCommand(byte[] bytes) {
+    private void setPathToFile(Path path) {
+        Path parent = path.getParent();
+        if (parent != null) {
+            this.pathToFile = path.getParent();
+        } else {
+            this.pathToFile = path;
+        }
+    }
+
+    public ByteArrayFileContent(byte[] bytes) {
         this.content = bytes;
-        this.isOnlyBytes = true;
     }
 
-    public DefaultFileCommand(String fileContent, Charset charset) {
+    public ByteArrayFileContent(List<String> fileContent, Charset cs, String delimiter) {
+        String strContent = String.join(delimiter, fileContent);
+        this.content = strContent.getBytes(cs);
+    }
+
+    public ByteArrayFileContent(List<String> fileContent, Charset cs) {
+        this(fileContent, cs, "\n");
+    }
+
+    public ByteArrayFileContent(String fileContent, Charset charset) {
         this.charset = charset;
         this.content = fileContent.getBytes(charset);
-        this.isOnlyBytes = false;
     }
 
     @Override
-    public File toFile() {
+    public Charset getCharset() {
+        return charset;
+    }
+
+    @Override
+    public File readFile() {
         if (file == null) {
             throw new IllegalStateException("Transient FileCommand");
         }
@@ -46,18 +70,17 @@ public class DefaultFileCommand implements FileCommand {
     }
 
     @Override
-    public File toFile(Path pathToFile, String filename) {
-        File f = new File(pathToFile + "/" + filename);
-
-        if (f.exists()) {
-            throw new IllegalStateException("Datei existiert bereits: " + f.getAbsolutePath());
-        }
+    public File writeToFile(Path absolutePath) {
+        Assert.fieldNotNull(content, "Call writeToFile(Path absolutePath) without content");
+        final File f = absolutePath.toFile();
 
         boolean created = false;
-        try {
-            created = f.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (f.exists()) {
+            created = true;
+        }
+
+        if (!created) {
+            created = createNewFile(f);
         }
 
         if (!created) {
@@ -79,6 +102,20 @@ public class DefaultFileCommand implements FileCommand {
         }
 
         return f;
+    }
+
+    @Override
+    public File writeToFile(Path pathToFile, String filename) {
+        return writeToFile(Path.of(pathToFile.toString() + "/" + filename));
+    }
+
+    private boolean createNewFile(File f) {
+        try {
+            return f.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

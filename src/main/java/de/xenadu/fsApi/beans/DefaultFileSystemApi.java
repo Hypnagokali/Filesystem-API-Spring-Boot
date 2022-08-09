@@ -1,22 +1,28 @@
 package de.xenadu.fsApi.beans;
 
 import de.xenadu.fsApi.asserts.Assert;
+import de.xenadu.fsApi.pojos.ByteArrayFileContent;
 import de.xenadu.fsApi.pojos.DownloadFileResponse;
-import de.xenadu.fsApi.pojos.FileCommand;
+import de.xenadu.fsApi.pojos.FileContent;
 import de.xenadu.fsApi.pojos.RawByteDownloadFileResponse;
+import de.xenadu.fsApi.types.Filename;
 import de.xenadu.fsApi.types.FsFile;
 import de.xenadu.fsApi.types.FsFileImpl;
+import de.xenadu.fsApi.types.FsPopulator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class DefaultFileSystemApi implements FilesystemApi {
 
     private final PathWrapper pathWrapper;
+    private final UniqueFilenameGenerator uniqueFilenameGenerator;
 
     @Override
     public void deleteAllFiles(Path path) {
@@ -37,12 +43,20 @@ public class DefaultFileSystemApi implements FilesystemApi {
     }
 
     @Override
-    public void saveFile(FileCommand fileCommand) {
-
+    public void saveFileContent(String fileContent, Charset cs, Path absolutePath) {
+        FileContent file = new ByteArrayFileContent(fileContent, cs);
+        file.writeToFile(absolutePath);
     }
 
     @Override
-    public <T extends FsFile> T uploadFileTyped(InputStream fileContent, String originalName, String pathToFile, String filename, T upload) {
+    public void saveFileContent(List<String> fileContent, Charset cs, Path path) {
+        FileContent file = new ByteArrayFileContent(fileContent, cs);
+        file.writeToFile(path);
+    }
+
+
+    @Override
+    public <T extends FsPopulator> T uploadFileTyped(InputStream fileContent, String originalName, String pathToFile, String filename, T upload) {
         final FsFile fsFile = uploadFile(fileContent, originalName, pathToFile, filename);
         upload.populate(fsFile.getFullPath(), fsFile.getOriginalName(), fsFile.getSize());
 
@@ -50,7 +64,7 @@ public class DefaultFileSystemApi implements FilesystemApi {
     }
 
     @Override
-    public <T extends FsFile> T uploadFileTyped(MultipartFile file, String pathToFile, String filename, T upload) {
+    public <T extends FsPopulator> T uploadFileTyped(MultipartFile file, String pathToFile, String filename, T upload) {
         final FsFile fsFile = uploadFile(file, pathToFile, filename);
         upload.populate(fsFile.getFullPath(), fsFile.getOriginalName(), fsFile.getSize());
 
@@ -112,6 +126,47 @@ public class DefaultFileSystemApi implements FilesystemApi {
         final File file = getFileFromPath(pathByName + "/" + filename);
 
         return new RawByteDownloadFileResponse(file);
+    }
+
+    @Override
+    public List<String> readAllLines(String absolutePath, Charset cs) {
+        Path path = Path.of(absolutePath);
+
+        try {
+            return Files.readAllLines(path, cs);
+        } catch (IOException e) {
+            throw new FilesystemApiException("Could not read file: " + path, e);
+        }
+    }
+
+    @Override
+    public String readString(String absolutePath, Charset cs) {
+        final Path path = Path.of(absolutePath);
+
+        try {
+            return Files.readString(path, cs);
+        } catch (IOException e) {
+            throw new FilesystemApiException("Could not read file: " + path, e);
+        }
+    }
+
+    @Override
+    public FsFile backupFile(String pathToFile, String backupPath) {
+        final File file = new File(pathToFile);
+
+        final String name = uniqueFilenameGenerator.generateUniqueName(Path.of(backupPath), "_" + file.getName());
+        final Path backupPathWithFile = Path.of(backupPath + "/" + name);
+
+        try {
+            Files.copy(file.toPath(), backupPathWithFile);
+        } catch (IOException e) {
+            throw new FilesystemApiException("Could not copy file", e);
+        }
+
+        FsFile fsFile = new FsFileImpl(backupPathWithFile.toString(), "", 0);
+
+
+        return fsFile;
     }
 
     private File getFileFromPath(String fullPathToFile) {

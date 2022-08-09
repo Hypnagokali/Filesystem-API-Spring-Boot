@@ -11,7 +11,7 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DefaultFileCommandTest {
+class ByteArrayFileCommandTest {
 
 
     @AfterEach
@@ -31,15 +31,15 @@ class DefaultFileCommandTest {
         final Path pathToFile = new File(uri).toPath();
 
 
-        FileCommand command = new DefaultFileCommand("Some content", StandardCharsets.UTF_8);
-        final File file = command.toFile(pathToFile, "anotherfile.txt");
+        FileContent command = new ByteArrayFileContent("Some content", StandardCharsets.UTF_8);
+        final File file = command.writeToFile(pathToFile, "anotherfile.txt");
 
         assertThat(file.exists()).isTrue();
     }
 
     @Test
     public void whenCreatedFromString_expectFileIsTransient() throws Exception {
-        FileCommand command = new DefaultFileCommand("Some content", StandardCharsets.UTF_8);
+        FileContent command = new ByteArrayFileContent("Some content", StandardCharsets.UTF_8);
 
         assertThat(command.isTransient()).isTrue();
     }
@@ -48,7 +48,7 @@ class DefaultFileCommandTest {
     public void whenFileExists_expectNotTransient() throws Exception {
         final URL resource = getClass().getResource("/testDir/testfile.txt");
         final File file = new File(resource.toURI());
-        FileCommand command = new DefaultFileCommand(file);
+        FileContent command = new ByteArrayFileContent(file);
 
         assertThat(command.isTransient()).isFalse();
     }
@@ -57,7 +57,7 @@ class DefaultFileCommandTest {
     public void whenFileExists_expectFilenameAndPath() throws Exception {
         final URL resource = getClass().getResource("/testDir/testfile.txt");
         final File file = new File(resource.toURI());
-        FileCommand command = new DefaultFileCommand(file);
+        FileContent command = new ByteArrayFileContent(file);
 
         assertThat(command.getFilename()).isEqualTo("testfile.txt");
         assertThat(command.getPathToFile().toString()).endsWith("/testDir");

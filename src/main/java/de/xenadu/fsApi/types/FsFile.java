@@ -1,8 +1,7 @@
 package de.xenadu.fsApi.types;
 
-public interface FsFile {
+public interface FsFile extends FsPopulator {
 
-    void populate(String fullPath, String originalName, long size);
     String getFullPath();
     String getFilename();
     String getOriginalName();

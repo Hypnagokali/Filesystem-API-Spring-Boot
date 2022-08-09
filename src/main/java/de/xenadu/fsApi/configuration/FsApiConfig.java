@@ -34,7 +34,7 @@ public class FsApiConfig {
     @Bean
     @ConditionalOnBean(PathWrapper.class)
     public FilesystemApi filesystemApi() {
-        return new DefaultFileSystemApi(pathWrapper());
+        return new DefaultFileSystemApi(pathWrapper(), uniqueFilenameGenerator());
     }
 
 }
